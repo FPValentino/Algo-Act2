@@ -70,11 +70,21 @@ public:
         }
     
         bool found[1000] = {false}; 
+        int counter = 0;
         
         Node* temp = head;
         while (temp != NULL) {
             found[temp->loanID] = true;
+            if(temp->name == name)
+                counter++;
             temp = temp->next;
+        }
+
+        if(counter > 2) {
+            cout << "User cannot exceed the limit of 2 maximum loans...\n";
+            cout << "Loan cannot be initialized...\n";
+            prompt();
+            return;
         }
     
         int missingID = 100; 
@@ -90,12 +100,12 @@ public:
         }
         newNode->loanAmount = (loanAmount * 0.06) + loanAmount;
         temp->next = newNode;
-        cout << "Loan Record ID # " << temp->loanID <<" Added Successfully...\n";
+        cout << "Loan Record ID # " << missingID <<" Added Successfully...\n";
+        prompt();
     }
     
 
     void displayRecords(){
-        cls();
         bool recordExists = false;
         int i = 1;
         Node *p = head;
@@ -198,6 +208,13 @@ public:
             cout << "No data found in file.\n";
         }
     }
+
+    Node* getHead() { 
+        return head; 
+    }
+    void setHead(Node* newHead) { 
+        head = newHead; 
+    }
 };
 
 int main() {
@@ -254,27 +271,44 @@ void GUI(){
                 cout << "Enter Age: ";
                 cin >> temp;
                 age = checkValid(temp);
-                if(age == -1)
+                if(age == -1){
+                    prompt();
                     break;
+                }
 
                 cout << "Enter Loan Amount: ";
                 cin >> temp;
                 oAmount = checkValid(temp);
-                if(oAmount == -1)
+                if(oAmount == -1) {
+                    prompt();
                     break;
+                }
+
+                if(oAmount > 500000) {
+                    cout << "Only loan amounts of 1 - 500,000 available...";
+                    prompt();
+                    break;
+                }
 
                 cout << "Enter Date (YYYY/MM/DD): ";
                 cin >> lDate;
-                if (!isDateValid(lDate)) 
+                if (!isDateValid(lDate)) {
+                    cout << "Invalid date format...\n";
+                    prompt();
                     break;
+                }
 
                 cout << "Enter Due Date (YYYY/MM/DD): ";
                 cin >> dDate;
-                if (!isDateValid(dDate)) 
+                if (!isDateValid(dDate)) {
+                    cout << "Invalid date format...\n";
+                    prompt();
                     break;
+                }
                 
                 lAmount = oAmount;
                 bank.addRecord(name, age, lID, lDate, dDate, lAmount, oAmount); 
+                bank.saveFile();
                 break;
             }
             case 'B': {
@@ -304,6 +338,12 @@ void GUI(){
                         cout << "Enter Amount to add: ";
                         cin >> amount;
                         int addAm = checkValid(amount);
+                        int tempAm = binary->loanAmount;
+                        if(tempAm+addAm > 500000) {
+                            cout << "Loan cannot exceed the maximum of 500000...\n";
+                            cout << "Cannot add loan...\n";
+                            break;
+                        }
                         binary->loanAmount += addAm;
                         cout << "Successfully updated!...\n";
                     } else if(decider == 2) {
@@ -312,12 +352,28 @@ void GUI(){
                         cin >> amount;
                         int minusAm = checkValid(amount);
                         int tempAm = binary->loanAmount;
-                        if(tempAm-minusAm < 0) {
-                            cout << "Invalid Amount\n";
+                        if(tempAm - minusAm < 0) {
+                            cout << "Invalid Amount\n"; 
                             break;
+                        } else if (tempAm - minusAm == 0) {
+                            cout << "Loan fully paid! Deleting record...\n";
+                            
+                            if (binary == bank.getHead()) {  
+                                bank.setHead(binary->next);
+                            } else {
+                                Node* prev = bank.getHead();
+                                while (prev->next != binary) {
+                                    prev = prev->next;
+                                }
+                                prev->next = binary->next;
+                            }
+                        
+                            delete binary;
+                            cout << "Record deleted successfully!\n";
+                        } else {
+                            binary->loanAmount -= minusAm;
+                            cout << "Successfully updated!...\n";
                         }
-                        binary->loanAmount -= minusAm;
-                        cout << "Successfully updated!...\n";
                     } else {
                         cout << "Invalid choice...";
                     }
@@ -325,7 +381,8 @@ void GUI(){
                 } else {
                     cout << "Record with Loan ID " << loanID << " not found...";
                     prompt();
-                }     
+                }  
+                bank.saveFile();   
                 break;
             }
             case 'C':  {
@@ -351,17 +408,26 @@ void GUI(){
                 
                 switch(decision){
                     case 1: {
+                        cls();
                         bank.sortByLoanDate();
+                        prompt();
+                        cls();
                         bank.displayRecords();
                         break;
                     }
                     case 2: {
+                        cls();
                         bank.sortByMerge(1);
+                        prompt();
+                        cls();
                         bank.displayRecords();
                         break;
                     }
                     case 3: {
+                        cls();
                         bank.sortByMerge(2);
+                        prompt();
+                        cls();
                         bank.displayRecords();
                         break;
                     }
@@ -373,6 +439,7 @@ void GUI(){
                         bank.sortByMerge(2);
                         Node* binary = bank.findBinary(loanID);
                         if(binary) {
+                        dSpace();
                         cout << "Found record ID " << binary->loanID << endl 
                         << "NAME: " << binary->name << endl 
                         << "Due Amount: " << binary->loanAmount << endl 

@@ -83,8 +83,11 @@ Node* Sort::partition(Node* start, Node* end) {
     Node* partIndex = start;
     Node* current = start;
 
+    cout << "PARTITIONING QUICKSORT with pivot: " << pivot << endl;
+
     while (current != end) {
         if (current->dueDate <= pivot) {
+            cout << "Swapping " << partIndex->dueDate << " with " << current->dueDate << endl;
             mySwap(partIndex->name, current->name);
             mySwap(partIndex->age, current->age);
             mySwap(partIndex->loanID, current->loanID);
@@ -97,6 +100,7 @@ Node* Sort::partition(Node* start, Node* end) {
         current = current->next;
     }
 
+    cout << "Final swap of pivot " << partIndex->dueDate << " with " << end->dueDate << endl;
     mySwap(partIndex->name, end->name);
     mySwap(partIndex->age, end->age);
     mySwap(partIndex->loanID, end->loanID);
