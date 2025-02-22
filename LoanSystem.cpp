@@ -40,12 +40,16 @@ private:
             mid = mid->next;
             fast = fast->next->next;
         }
+        cout << "Checking node with loanID: " << mid->loanID << endl;
 
         if (mid->loanID == loanID) {
+            cout << "Found loanID: " << loanID << " at middle " << endl;
             return mid;
         } else if (mid->loanID < loanID) {
+            cout << "Searching right half..." << endl;
             leftN = mid->next;
         } else {
+            cout << "Searching left half..." << endl;
             rightN = mid;
         }
 
@@ -317,7 +321,11 @@ void GUI(){
                 cin >> temp;
                 int loanID = checkValid(temp);
                 bank.sortByMerge(2);
+                dSpace();
                 Node* binary = bank.findBinary(loanID);
+                dSpace();
+                prompt();
+                cls();
                 if(binary) {
                 cout << "Found record ID " << binary->loanID << endl 
                 << "NAME: " << binary->name << endl 
@@ -437,9 +445,12 @@ void GUI(){
                         cin >> temp;
                         int loanID = checkValid(temp);
                         bank.sortByMerge(2);
-                        Node* binary = bank.findBinary(loanID);
-                        if(binary) {
                         dSpace();
+                        Node* binary = bank.findBinary(loanID);
+                        dSpace();
+                        prompt();
+                        cls();
+                        if(binary) {
                         cout << "Found record ID " << binary->loanID << endl 
                         << "NAME: " << binary->name << endl 
                         << "Due Amount: " << binary->loanAmount << endl 
