@@ -120,6 +120,7 @@ public:
             } else {
                 cout << "No loans currently exists...\n";
                 cout << "Returning to main...\n";
+                prompt();
                 return;
             }
     
