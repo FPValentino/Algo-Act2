@@ -351,6 +351,7 @@ void GUI(){
                         if(tempAm+addAm > 500000) {
                             cout << "Loan cannot exceed the maximum of 500000...\n";
                             cout << "Cannot add loan...\n";
+			    prompt();
                             break;
                         }
                         binary->loanAmount += addAm;
@@ -363,6 +364,7 @@ void GUI(){
                         int tempAm = binary->loanAmount;
                         if(tempAm - minusAm < 0) {
                             cout << "Invalid Amount\n"; 
+			    prompt();
                             break;
                         } else if (tempAm - minusAm == 0) {
                             cout << "Loan fully paid! Deleting record...\n";
