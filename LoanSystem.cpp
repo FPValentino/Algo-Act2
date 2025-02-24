@@ -25,7 +25,7 @@ class bankRecords {
 private:
     Node* head;
 
-    Node* binarySearch(int loanID) { //change tom for customizable parameter
+    Node* binarySearch(int loanID) { 
     if (!head) return NULL;
 
     Node* leftN = head;
